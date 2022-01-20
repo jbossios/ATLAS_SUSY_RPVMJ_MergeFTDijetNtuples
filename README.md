@@ -1,17 +1,21 @@
 
 # How to use it?
 
-1. Setup: ```source Setup.sh```
+## 1. Setup
 
-2. Use ```MergeTTrees.py``` script to merge dijet ntuples.
+```source Setup.sh```
 
-<u>Syntax</u>
+## 2. Use ```MergeTTrees.py``` script to merge dijet ntuples.
 
+**Syntax:**
+
+```
 python MergeTTrees.py --inDir [INPUT_DIRECTORY] --outDir [OUTPUT_DIRECTORY]
+```
 
-Optional flags:
+**Optional flags:**
 
-- --debug: enables debug logging
-- --dryRun: doesn't merge anything
+- ```--debug```: enables debug logging
+- ```--dryRun```: doesn't merge anything
 
 **Please note:** ```INPUT_DIRECTORY``` must contain the dataset name of the grid job (in order to extract information)
