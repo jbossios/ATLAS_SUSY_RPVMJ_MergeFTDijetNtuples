@@ -16,7 +16,7 @@ def merge_tchain_to_rdf(my_tchain, ttree_name, output_dir, dry_run, pmg_file_nam
 	n_events = my_df.Count().GetValue()
 	log.info('Total number of entries = {}'.format(n_events))
 
-    # Protection
+	# Protection
 	if not n_events:
 		log.info('No events found, no output file will be produced')
 		sys.exit(0)
@@ -30,7 +30,7 @@ def merge_tchain_to_rdf(my_tchain, ttree_name, output_dir, dry_run, pmg_file_nam
 	if not dry_run and not os.path.exists(output_dir):
 		os.makedirs(output_dir)
 
-    # Separate dataframes by DSID
+	# Separate dataframes by DSID
 	for dsid in dsids:
 		my_df_dsid = my_df.Filter("mcChannelNumber == {}".format(dsid))
 	
