@@ -88,7 +88,7 @@ def merge_ttrees(args):
 	log.info('Files in the following directory will be merged: {}'.format(input_dir))
 
 	# Create a TChain of all TTrees
-	ROOT.EnableImplicitMT()
+	ROOT.EnableImplicitMT(4)
 	my_tchain = TChain(ttree_name)
 	sum_of_weights = {} # sum of weights for each dsid
 	for file_name in os.listdir(input_dir):
