@@ -133,11 +133,11 @@ if __name__ == '__main__':
 	args = parser.parse_args()
 
 	# Protections
-	if not input_dir:
+	if not args.input_dir:
 		log.fatal('{} is empty, please specify input directory, exiting'.format(input_dir))
 		parser.print_help()
 		sys.exit(1)
-	if not output_dir:
+	if not args.output_dir:
 		log.fatal('{} is empty, please specify input directory, exiting'.format(output_dir))
 		parser.print_help()
 		sys.exit(1)
