@@ -80,6 +80,7 @@ def merge_ttrees(args):
 	debug = args.debug
 	ttree_name = args.ttree_name
 	dry_run = args.dry_run
+	n_cpu = args.n_cpu
 
 	# Create logger
 	logging.basicConfig(level = 'INFO' if not debug else 'DEBUG', format = '%(levelname)s: %(message)s')
@@ -88,7 +89,7 @@ def merge_ttrees(args):
 	log.info('Files in the following directory will be merged: {}'.format(input_dir))
 
 	# Create a TChain of all TTrees
-	ROOT.EnableImplicitMT(4)
+	ROOT.EnableImplicitMT(n_cpu)
 	my_tchain = TChain(ttree_name)
 	sum_of_weights = {} # sum of weights for each dsid
 	for file_name in os.listdir(input_dir):
@@ -128,6 +129,7 @@ if __name__ == '__main__':
 	parser.add_argument('--outDir', action='store', dest='output_dir', default='', help='Directory where output merged files will be located')
 	parser.add_argument('--pmgFileName', action='store', dest='pmg_file_name', default='/cvmfs/atlas.cern.ch/repo/sw/database/GroupData/dev/PMGTools/PMGxsecDB_mc16.txt', help='Full file name containing PMG cross sections, efficiencies, etc')
 	parser.add_argument('--ttreeName', action='store', dest='ttree_name', default='trees_SRRPV_', help='Name of input TTrees')
+	parser.add_argument("--nCPU",  action='store', dest='n_cpu', default=4, help = 'Number of CPUs to be used for multi-threading')
 	parser.add_argument("--dryRun",  action='store_true', dest='dry_run', default=False, help = 'do a dry run, without actually merging anything')
 	parser.add_argument('--debug', action='store_true', dest='debug', default=False, help='Debug flag')
 	args = parser.parse_args()
