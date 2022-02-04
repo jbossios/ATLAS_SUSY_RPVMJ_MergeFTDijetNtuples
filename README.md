@@ -5,6 +5,8 @@ The normweight branch is constructed as follow:
 
 <div align=center>mcEventWeight * cross-section * efficiency * kFactor / sum of weights</div>
 
+The PRW weight is missing, until it is fixed in the input samples.
+
 ## 1. Merge all ROOT files from a given DSID and add the normweight branch
 
 ### How to use it?
