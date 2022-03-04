@@ -129,9 +129,9 @@ def expand_ttrees(args):
     # Get sum of weights from metadata
     metadata_hist = tfile.Get('MetaData_EventCount')
     if dsid not in sum_of_weights:
-      sum_of_weights[dsid] = metadata_hist.GetBinContent(2) # initial sum of weights
+      sum_of_weights[dsid] = metadata_hist.GetBinContent(3) # initial sum of weights
     else:
-      sum_of_weights[dsid] += metadata_hist.GetBinContent(2) # initial sum of weights
+      sum_of_weights[dsid] += metadata_hist.GetBinContent(3) # initial sum of weights
 
   # Add normweight and write a new ROOT file
   for file_name in os.listdir(input_dir):
