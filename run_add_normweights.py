@@ -1,6 +1,6 @@
 import os
 
-sample = 'Signal' # options: Signal, Dijets
+sample = 'Dijets' # options: Signal, Dijets
 
 signal_path = '/eos/atlas/atlascerngroupdisk/phys-susy/RPV_mutlijets_ANA-SUSY-2019-24/ntuples/tag/input/mc16e/signal/'
 
@@ -67,18 +67,18 @@ paths = {
 }
 
 base_out_dir = {
-  'Dijets' : '/eos/atlas/atlascerngroupdisk/phys-susy/RPV_mutlijets_ANA-SUSY-2019-24/ntuples/tag/input/mc16e/dijets_expanded',
-  'Signal' : '/eos/atlas/atlascerngroupdisk/phys-susy/RPV_mutlijets_ANA-SUSY-2019-24/ntuples/tag/input/mc16e/signal_expanded',
+  'Dijets' : '/eos/atlas/atlascerngroupdisk/phys-susy/RPV_mutlijets_ANA-SUSY-2019-24/ntuples/tag/input/mc16e/dijets_expanded_fixed',
+  'Signal' : '/eos/atlas/atlascerngroupdisk/phys-susy/RPV_mutlijets_ANA-SUSY-2019-24/ntuples/tag/input/mc16e/signal_expanded_fixed',
 }
 
 commands = []
 for path in paths[sample]:
   # Identify type of sample
-  sample = 'dijets' if '3647' in path else 'signal'
-  if sample == 'dijets':
+  sample = 'Dijets' if '3647' in path else 'Signal'
+  if sample == 'Dijets':
     jz_slice = int(path.split('3647')[1][0:2])
     out_dir = '{}/JZ{}'.format(base_out_dir[sample], jz_slice)
-  else: # signal
+  else: # Signal
     dsid = path.split('5045')[1][0:2]
     out_dir = '{}/5045{}'.format(base_out_dir[sample], dsid)
   commands.append('python add_normweights.py --inDir {} --outDir {}'.format(path, out_dir))
