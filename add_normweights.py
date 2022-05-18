@@ -43,10 +43,12 @@ def add_normweight(conf):
   ttree = tfile.Get(ttree_name)
   if not ttree:
     tfile.Close()
-    pass
+    log.info("TTree {} does not exist. Not processing the file".format(ttree_name))
+    return
   if ttree.GetEntries() == 0:
     tfile.Close()
-    pass
+    log.info("TTree {} has 0 entries. Not processing the file".format(ttree_name))
+    return 
 
   # Create RDataFrame
   my_df = RDataFrame(ttree)
