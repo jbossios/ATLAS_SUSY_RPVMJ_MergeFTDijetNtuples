@@ -8,9 +8,22 @@ import os
 from ROOT import *
 import logging
 
-def add_normweight(file_name, input_dir, ttree_name, output_dir, dry_run, pmg_file_name, sum_of_weights, log, debug):
+# Create logger
+#logging.basicConfig(level = 'INFO' if not debug else 'DEBUG', format = '%(levelname)s: %(message)s')
+log = logging.getLogger()
+
+def add_normweight(conf): #file_name, input_dir, ttree_name, output_dir, dry_run, pmg_file_name, sum_of_weights, debug):
   """ Create a RDataFrame from a TChain, add a branch and save it to a ROOT file"""
-  
+  # unpack
+  file_name = conf["file_name"]
+  input_dir = conf["input_dir"]
+  ttree_name = conf["ttree_name"]
+  output_dir = conf["output_dir"]
+  dry_run = conf["dry_run"]
+  pmg_file_name = conf["pmg_file_name"]
+  sum_of_weights = conf["sum_of_weights"]
+  debug = conf["debug"]
+
   full_file_name = '{}/{}'.format(input_dir, file_name)
   log.info('Processing {}'.format(full_file_name))
 
@@ -105,7 +118,7 @@ def expand_ttrees(args):
   debug = args.debug
   ttree_name = args.ttree_name
   dry_run = args.dry_run
-  ncpu = ars.ncpu
+  ncpu = args.ncpu
 
   # Create logger
   logging.basicConfig(level = 'INFO' if not debug else 'DEBUG', format = '%(levelname)s: %(message)s')
@@ -133,6 +146,8 @@ def expand_ttrees(args):
       sum_of_weights[dsid] = metadata_hist.GetBinContent(3) # initial sum of weights
     else:
       sum_of_weights[dsid] += metadata_hist.GetBinContent(3) # initial sum of weights
+  
+  print(sum_of_weights)
 
   # create job configurations
   config = []
@@ -145,9 +160,10 @@ def expand_ttrees(args):
       "dry_run" : dry_run,
       "pmg_file_name" : pmg_file_name,
       "sum_of_weights" : sum_of_weights,
-      "log" : log, 
+      #"log" : log, 
       "debug" : debug
     })
+  print(config[0])
 
   # Add normweight and write a new ROOT file
   if ncpu > 1:
