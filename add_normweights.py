@@ -13,6 +13,7 @@ log = logging.getLogger()
 
 def add_normweight(conf):
   """ Create a RDataFrame from a TChain, add a branch and save it to a ROOT file"""
+  
   # unpack
   file_name = conf["file_name"]
   input_dir = conf["input_dir"]
@@ -127,9 +128,10 @@ def expand_ttrees(args):
   # remove already expanded files
   file_list = [i for i in file_list if '_expanded.root' not in i]
 
-  # Create logger
-  logging.basicConfig(level = 'INFO' if not debug else 'DEBUG', format = '%(levelname)s: %(message)s')
-  log = logging.getLogger()
+  # update global logger to new debugging
+  if debug:
+    logging.basicConfig(level = 'DEBUG', format = '%(levelname)s: %(message)s')
+    log = logging.getLogger()
   
   log.info('Files in the following directory will be merged: {}'.format(input_dir))
 
@@ -139,7 +141,6 @@ def expand_ttrees(args):
     # Make sure it's a ROOT file
     if not file_name.endswith('.root'): continue
     # Get metadata from all files, even those w/ empty TTrees
-    # full_file_name = '{}/{}'.format(input_dir, file_name)
     try:
       tfile = TFile.Open(file_name)
     except OSError:
@@ -154,7 +155,7 @@ def expand_ttrees(args):
     else:
       sum_of_weights[dsid] += metadata_hist.GetBinContent(3) # initial sum of weights
   
-  print(sum_of_weights)
+  log.info('Sum of weights: {}'.format(sum_of_weights))
 
   # create job configurations
   config = []
@@ -167,14 +168,12 @@ def expand_ttrees(args):
       "dry_run" : dry_run,
       "pmg_file_name" : pmg_file_name,
       "sum_of_weights" : sum_of_weights,
-      #"log" : log, 
       "debug" : debug
     })
 
   # Add normweight and write a new ROOT file
   if not dry_run:
     if ncpu > 1:
-      # launch pool
       results = Pool(ncpu).map(add_normweight, config)
     else:
       for conf in config:
@@ -183,7 +182,6 @@ def expand_ttrees(args):
   log.info('>>> All done <<<')
 
 def handleInput(data):
-    # otherwise return 
     if os.path.isfile(data) and ".root" in os.path.basename(data):
         return [data]
     elif os.path.isfile(data) and ".txt" in os.path.basename(data):
@@ -206,16 +204,12 @@ if __name__ == '__main__':
   parser.add_argument('--debug', action='store_true', dest='debug', default=False, help='Debug flag')
   parser.add_argument("--ncpu", help="Number of cores to use for multiprocessing. If not provided multiprocessing not done.", default=1, type=int)
   args = parser.parse_args()
-  print(args.output_dir)
   # Protections
   if not args.input_dir:
     print('ERROR: please specify input directory, exiting')
     parser.print_help()
     sys.exit(1)
   if not args.output_dir:
-    #print('ERROR: please specify output directory, exiting')
     log.info("No output directory provided so inferring from filenames")
-    #parser.print_help()
-    #sys.exit(1)
   
   expand_ttrees(args)
