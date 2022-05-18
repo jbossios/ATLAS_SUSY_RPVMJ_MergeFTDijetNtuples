@@ -1,4 +1,3 @@
-
 from multiprocessing import Pool
 from functools import partial
 import array
@@ -8,11 +7,10 @@ import os
 from ROOT import *
 import logging
 
-# Create logger
-#logging.basicConfig(level = 'INFO' if not debug else 'DEBUG', format = '%(levelname)s: %(message)s')
+# create log
 log = logging.getLogger()
 
-def add_normweight(conf): #file_name, input_dir, ttree_name, output_dir, dry_run, pmg_file_name, sum_of_weights, debug):
+def add_normweight(conf):
   """ Create a RDataFrame from a TChain, add a branch and save it to a ROOT file"""
   # unpack
   file_name = conf["file_name"]
@@ -120,6 +118,9 @@ def expand_ttrees(args):
   dry_run = args.dry_run
   ncpu = args.ncpu
 
+  # get list of files
+  file_list = handleInput(input_dir)
+  
   # Create logger
   logging.basicConfig(level = 'INFO' if not debug else 'DEBUG', format = '%(levelname)s: %(message)s')
   log = logging.getLogger()
@@ -128,7 +129,7 @@ def expand_ttrees(args):
 
   # Get sum of weights from all input files (by DSID)
   sum_of_weights = {} # sum of weights for each dsid
-  for file_name in os.listdir(input_dir):
+  for file_name in file_list:
     # Make sure it's a ROOT file
     if not file_name.endswith('.root'): continue
     # Get metadata from all files, even those w/ empty TTrees
@@ -151,7 +152,7 @@ def expand_ttrees(args):
 
   # create job configurations
   config = []
-  for file_name in os.listdir(input_dir):
+  for file_name in file_list:
     config.append({
       "file_name" : file_name, 
       "input_dir" : input_dir,
@@ -174,6 +175,19 @@ def expand_ttrees(args):
       add_normweight(**conf)
   
   log.info('>>> All done <<<')
+
+def handleInput(data):
+    # otherwise return 
+    elif os.path.isfile(data) and ".root" in os.path.basename(data):
+        return [data]
+    elif os.path.isfile(data) and ".txt" in os.path.basename(data):
+        return sorted([line.strip() for line in open(data,"r")])
+    elif os.path.isdir(data):
+        return sorted(os.listdir(data))
+    elif "*" in data:
+        from glob import glob
+        return sorted(glob(data))
+    return []
 
 if __name__ == '__main__':
   import argparse
