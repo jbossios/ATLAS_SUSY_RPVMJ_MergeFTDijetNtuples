@@ -83,7 +83,7 @@ def add_normweight(conf):
     # Add normweight branch
     pmg_info = pmg_dict[dsid]
     log.info('Adding "normweight" branch for file with dsid = {}'.format(dsid))
-    my_df_dsid = my_df_dsid.Define("normweight", "mcEventWeight * {} * {} * {} / {}".format(pmg_info['xs'], pmg_info['eff'], pmg_info['kfactor'], sum_of_weights[dsid]))
+    my_df_dsid = my_df_dsid.Define("normweight", "mcEventWeight * pileupWeight * {} * {} * {} / {}".format(pmg_info['xs'], pmg_info['eff'], pmg_info['kfactor'], sum_of_weights[dsid]))
     if debug:
       hist = my_df_dsid.Histo1D("normweight")
       output_file = TFile('normweight_histogram_dsid_{}.root'.format(dsid), 'RECREATE')
