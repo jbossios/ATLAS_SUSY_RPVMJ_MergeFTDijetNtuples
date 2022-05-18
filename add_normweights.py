@@ -105,6 +105,7 @@ def expand_ttrees(args):
   debug = args.debug
   ttree_name = args.ttree_name
   dry_run = args.dry_run
+  ncpu = ars.ncpu
 
   # Create logger
   logging.basicConfig(level = 'INFO' if not debug else 'DEBUG', format = '%(levelname)s: %(message)s')
@@ -133,10 +134,29 @@ def expand_ttrees(args):
     else:
       sum_of_weights[dsid] += metadata_hist.GetBinContent(3) # initial sum of weights
 
-  # Add normweight and write a new ROOT file
+  # create job configurations
+  config = []
   for file_name in os.listdir(input_dir):
-    add_normweight(file_name, input_dir, ttree_name, output_dir, dry_run, pmg_file_name, sum_of_weights, log, debug)
+    config.append({
+      "file_name" : file_name, 
+      "input_dir" : input_dir,
+      "ttree_name" : ttree_name,
+      "output_dir" : output_dir,
+      "dry_run" : dry_run,
+      "pmg_file_name" : pmg_file_name,
+      "sum_of_weights" : sum_of_weights,
+      "log" : log, 
+      "debug" : debug
+    })
 
+  # Add normweight and write a new ROOT file
+  if ncpu > 1:
+    # launch pool
+    results = Pool(ncpu).map(add_normweight, config)
+  else:
+    for conf in config:
+      add_normweight(**conf)
+  
   log.info('>>> All done <<<')
 
 if __name__ == '__main__':
@@ -148,6 +168,7 @@ if __name__ == '__main__':
   parser.add_argument('--ttreeName', action='store', dest='ttree_name', default='trees_SRRPV_', help='Name of input TTrees')
   parser.add_argument("--dryRun",  action='store_true', dest='dry_run', default=False, help = 'do a dry run, without actually doing anything')
   parser.add_argument('--debug', action='store_true', dest='debug', default=False, help='Debug flag')
+  parser.add_argument("--ncpu", help="Number of cores to use for multiprocessing. If not provided multiprocessing not done.", default=1, type=int)
   args = parser.parse_args()
 
   # Protections
