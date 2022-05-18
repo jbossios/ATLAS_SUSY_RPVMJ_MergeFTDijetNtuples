@@ -129,9 +129,8 @@ def expand_ttrees(args):
   file_list = [i for i in file_list if '_expanded.root' not in i]
 
   # update global logger to new debugging
-  if debug:
-    logging.basicConfig(level = 'DEBUG', format = '%(levelname)s: %(message)s')
-    log = logging.getLogger()
+  logging.basicConfig(level = 'INFO' if not debug else 'DEBUG', format = '%(levelname)s: %(message)s')
+  log = logging.getLogger()
   
   log.info('Files in the following directory will be merged: {}'.format(input_dir))
 
@@ -210,6 +209,6 @@ if __name__ == '__main__':
     parser.print_help()
     sys.exit(1)
   if not args.output_dir:
-    log.info("No output directory provided so inferring from filenames")
+    print('WARNING: No output directory provided so inferring from filenames')
   
   expand_ttrees(args)
