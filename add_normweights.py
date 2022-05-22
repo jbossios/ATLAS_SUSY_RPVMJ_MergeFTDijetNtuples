@@ -51,7 +51,7 @@ def add_normweight(conf):
     return 
 
   # Create RDataFrame
-  my_df = RDataFrame(ttree)
+  my_df = ROOT.RDataFrame(ttree)
   if not my_df:
     log.fatal('RDataFrame can not be created, exiting')
     sys.exit(1)
@@ -188,7 +188,7 @@ def handleInput(data):
     elif os.path.isfile(data) and ".txt" in os.path.basename(data):
         return sorted([line.strip() for line in open(data,"r")])
     elif os.path.isdir(data):
-        return sorted(os.listdir(data))
+        return sorted([os.path.join(data,i) for i in os.listdir(data)])
     elif "*" in data:
         from glob import glob
         return sorted(glob(data))
