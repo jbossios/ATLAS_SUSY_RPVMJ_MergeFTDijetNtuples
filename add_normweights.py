@@ -45,11 +45,11 @@ def add_normweight(conf):
     if not ttree:
         tfile.Close()
         log.info(
-            "TTree {} does not exist. Not processing the file".format(ttree_name))
+            f"TTree {ttree_name} does not exist. Not processing the file {file_name}")
         return
     if ttree.GetEntries() == 0:
         tfile.Close()
-        log.info("TTree {} has 0 entries. Not processing the file".format(ttree_name))
+        log.info(f"TTree {ttree_name} has 0 entries. Not processing the file {file_name}")
         return
 
     # Create RDataFrame
@@ -66,10 +66,14 @@ def add_normweight(conf):
         sys.exit(0)
 
     # Get DSIDs
-    dsids_ = unique((my_df.AsNumpy(["mcChannelNumber"]))[
+    try:
+        dsids_ = unique((my_df.AsNumpy(["mcChannelNumber"]))[
                     'mcChannelNumber']).tolist()
-    dsids = [int(dsid) for dsid in dsids_]
-    log.debug('dsids = {}'.format(dsids))
+        dsids = [int(dsid) for dsid in dsids_]
+        log.debug('dsids = {}'.format(dsids))
+    except:
+        log.info(f"Not processing the file because mcChannelNumber is not in file likely something wrong with {file_name}")
+        sys.exit(0)
 
     # Create output directory
     if not dry_run and not os.path.exists(output_dir):
